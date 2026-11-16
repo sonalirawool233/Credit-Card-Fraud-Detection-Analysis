@@ -1,0 +1,3 @@
+Class,Total_Transactions,Average_Amount,Total_Amount,Transaction_Type,Percentage
+0,284315,88.29,25102462.04,Genuine,99.83
+1,492,122.21,60127.97,Fraud,0.17
