@@ -1,0 +1,128 @@
+CREATE TABLE credit_card_transactions (
+    Time REAL,
+    V1 REAL,
+    V2 REAL,
+    V3 REAL,
+    V4 REAL,
+    V5 REAL,
+    V6 REAL,
+    V7 REAL,
+    V8 REAL,
+    V9 REAL,
+    V10 REAL,
+    V11 REAL,
+    V12 REAL,
+    V13 REAL,
+    V14 REAL,
+    V15 REAL,
+    V16 REAL,
+    V17 REAL,
+    V18 REAL,
+    V19 REAL,
+    V20 REAL,
+    V21 REAL,
+    V22 REAL,
+    V23 REAL,
+    V24 REAL,
+    V25 REAL,
+    V26 REAL,
+    V27 REAL,
+    V28 REAL,
+    Amount REAL,
+    Class INTEGER
+);
+
+
+SELECT COUNT(*) AS Total_Transactions
+FROM credit_card_transactions;
+
+-- 2. Count Genuine and Fraud Transactions
+
+SELECT
+    Class,
+    COUNT(*) AS Total_Transactions
+FROM credit_card_transactions
+GROUP BY Class;
+
+-- 3. Calculate Fraud Percentage
+
+SELECT
+    COUNT(*) AS Total_Transactions,
+    SUM(CASE WHEN Class = 1 THEN 1 ELSE 0 END) AS Fraud_Transactions,
+    ROUND(
+        100.0 * SUM(CASE WHEN Class = 1 THEN 1 ELSE 0 END) / COUNT(*),
+        2
+    ) AS Fraud_Percentage
+FROM credit_card_transactions;
+
+-- 4. Average Transaction Amount by Class
+
+SELECT
+    Class,
+    ROUND(AVG(Amount), 2) AS Average_Amount
+FROM credit_card_transactions
+GROUP BY Class;
+
+-- 5. Maximum Transaction Amount by Class
+
+SELECT
+    Class,
+    MAX(Amount) AS Maximum_Amount
+FROM credit_card_transactions
+GROUP BY Class;
+
+-- 6. Minimum Transaction Amount by Class
+
+SELECT
+    Class,
+    MIN(Amount) AS Minimum_Amount
+FROM credit_card_transactions
+GROUP BY Class;
+
+-- 7. Display Fraud Transactions
+
+SELECT
+    Time,
+    Amount,
+    Class
+FROM credit_card_transactions
+WHERE Class = 1
+ORDER BY Amount DESC;
+
+-- 8. Fraud Transactions by Hour
+
+SELECT
+    CAST(Time / 3600 AS INTEGER) AS Transaction_Hour,
+    COUNT(*) AS Fraud_Count
+FROM credit_card_transactions
+WHERE Class = 1
+GROUP BY CAST(Time / 3600 AS INTEGER)
+ORDER BY Transaction_Hour;
+
+-- 9. Fraud Transactions Above Average Amount
+
+SELECT
+    Time,
+    Amount,
+    Class
+FROM credit_card_transactions
+WHERE Class = 1
+AND Amount > (
+    SELECT AVG(Amount)
+    FROM credit_card_transactions
+)
+ORDER BY Amount DESC;
+
+-- 10. Transaction Amount Category Analysis
+
+SELECT
+    CASE
+        WHEN Amount < 100 THEN 'Low Amount'
+        WHEN Amount BETWEEN 100 AND 1000 THEN 'Medium Amount'
+        ELSE 'High Amount'
+    END AS Amount_Category,
+    Class,
+    COUNT(*) AS Total_Transactions
+FROM credit_card_transactions
+GROUP BY Amount_Category, Class
+ORDER BY Amount_Category;
